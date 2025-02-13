@@ -1,4 +1,9 @@
 import os
+import logging
+
+
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s:')
+
 
 # Define the structure as nested dictionaries
 project_structure = {
