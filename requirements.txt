@@ -1,0 +1,13 @@
+
+huggingface-hub==0.14.1
+flask
+streamlit
+ctransformers
+sentence-transformers
+pinecone-client
+langchain
+
+
+
+-e .
+
