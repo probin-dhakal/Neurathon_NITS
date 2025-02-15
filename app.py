@@ -69,21 +69,6 @@ def main(user_query):
     return response.text
 
 
-# def main(user_query):
-    
-    
-#     conversation_history += f"User : {user_query}"
-#     context_combines = query_pinecone(user_query)
-
-#     model = genai.GenerativeModel('gemini-2.0-flash')
-#     prompt = PROMPT.format(context=context_combines, question=user_query, conversation_history=conversation_history)
-#     response = model.generate_content(prompt)
-    
-     
-#     conversation_history += f"Debate Agent : {response}"
-    
-#     return response.text
-
 def generate_pdf(debate_history):
     pdf = FPDF()
     pdf.add_page()
@@ -102,12 +87,6 @@ def generate_pdf(debate_history):
     return pdf_file_path
 
     
-# if __name__ == "__main__":
-#     while True:
-#         user_query = input("Enter the input : ")
-#         print(main(user_query))
-        
-        
         
 @app.route("/")
 def index():
