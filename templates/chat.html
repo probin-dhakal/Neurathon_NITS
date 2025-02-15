@@ -5,76 +5,159 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Chatbot</title>
+		<title>Debate_Partner_AI</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}"/>
 	</head>
 	
-	<body>
-		<div class="container-fluid h-100">
-			<div class="row justify-content-center h-100">		
-				<div class="col-md-12 col-xl-10 chat">
-					<div class="card">
-						<div class="card-header msg_head">
-							<div class="d-flex bd-highlight">
-								<div class="img_cont">
-									<img src="https://www.shutterstock.com/shutterstock/photos/2342219157/display_1500/stock-vector-cute-male-teacher-cartoon-character-2342219157.jpg" class="rounded-circle user_img">
-									<span class="online_icon"></span>
-								</div>
-								<div class="user_info">
-									<span>Debate_Partner_ai</span>
-									<p>Type start to Start Debate!</p>
-								</div>
-							</div>
-						</div>
-						<div id="messageFormeight" class="card-body msg_card_body">
-						</div>
-						<div class="card-footer">
-							<form id="messageArea" class="input-group">
-                                <input type="text" id="text" name="msg" placeholder="Type your message..." autocomplete="off" class="form-control type_msg" required/>
-								<div class="input-group-append">
-									<button type="submit" id="send" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></button>
-									<a href="/download_pdf" class="btn btn-primary" style="margin-top: 10px;">Download Debate Transcript (PDF)</a>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		<script>
-			$(document).ready(function() {
-				$("#messageArea").on("submit", function(event) {
-					event.preventDefault();
-					const date = new Date();
-					const hour = date.getHours();
-					const minute = date.getMinutes();
-					const str_time = hour+":"+minute;
-					var rawText = $("#text").val();
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body><div class="card-footer">
+              <!-- Topic, Role and Argument Input -->
+              <form id="startDebateForm" class="mb-3">
+                <div class="form-group">
+                  <input
+                    type="text"
+                    id="debate_topic"
+                    class="form-control"
+                    placeholder="Enter Debate Topic"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <select id="debate_role" class="form-control" required>
+                    <option value="For">For</option>
+                    <option value="Against">Against</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <textarea
+                    id="initial_argument"
+                    class="form-control"
+                    rows="2"
+                    placeholder="Enter Your Initial Argument"
+                    required
+                  ></textarea>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Start Debate</button>
+              </form>
 
-					var userHtml = '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">' + rawText + '<span class="msg_time_send">'+ str_time + '</span></div><div class="img_cont_msg"><img src="https://i.ibb.co/d5b84Xw/Untitled-design.png" class="rounded-circle user_img_msg"></div></div>';
-					
-					$("#text").val("");
-					$("#messageFormeight").append(userHtml);
+              <!-- Debate Timer -->
+              <div id="debate_timer" class="text-center mb-3" style="font-size: 1.2rem; display: none;"></div>
 
-					$.ajax({
-						data: {
-							msg: rawText, 	
-						},
-						type: "POST",
-						url: "/get",
-						success: function(data) {
-							var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="img_cont_msg"><img src="https://spaces-cdn.clipsafari.com/9ckweayvwk7qacurwqq8m2655pwk" class="rounded-circle user_img_msg"></div><div class="msg_cotainer">' + data.response + '<span class="msg_time">' + str_time + '</span></div></div>';
-							$("#messageFormeight").append(botHtml);
-						},
-						error: function() {
-							alert("There was an error processing your request");
-						}
-					});
-				});
-			});
-		</script>
-	</body>
+              <!-- End Debate Button -->
+              <button id="endDebate" class="btn btn-danger btn-block mb-3" style="display: none;">End Debate</button>
+            </div>
+    <div class="container-fluid h-100">
+      <div class="row justify-content-center h-100">
+        <div class="col-md-12 col-xl-10 chat">
+          <div class="card">
+            <div class="card-header msg_head">
+              <div class="d-flex bd-highlight">
+                <div class="img_cont">
+                  <img
+                    src="https://www.shutterstock.com/shutterstock/photos/2342219157/display_1500/stock-vector-cute-male-teacher-cartoon-character-2342219157.jpg"
+                    class="rounded-circle user_img"
+                    alt="Chatbot Avatar"
+                  />
+                  <span class="online_icon"></span>
+                </div>
+                <div class="user_info">
+                  <span>Debate_Partner_ai</span>
+                  <p>Type start to Start Debate!</p>
+                </div>
+              </div>
+            </div>
+
+            
+
+            <div class="card-body msg_card_body" id="messageFormeight"></div>
+
+            <div class="card-footer">
+              <!-- Chat Input -->
+              <form id="messageArea" class="input-group">
+                <input
+                  type="text"
+                  id="text"
+                  name="msg"
+                  placeholder="Type your message..."
+                  autocomplete="off"
+                  class="form-control type_msg"
+                  required
+                />
+                <div class="input-group-append">
+                  <button type="submit" id="send" class="input-group-text send_btn">
+                    <i class="fas fa-location-arrow"></i>
+                  </button>
+                  <a href="/download_pdf" class="btn btn-primary ml-2">Download Transcript (PDF)</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function () {
+        let debateTimerInterval;
+
+        function startDebateTimer(duration) {
+          let timer = duration, minutes, seconds;
+          debateTimerInterval = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            $('#debate_timer').text(minutes + ":" + seconds);
+
+            if (--timer < 0) {
+              clearInterval(debateTimerInterval);
+              $('#debate_timer').text('Time is up!');
+            }
+          }, 1000);
+        }
+
+        $('#startDebateForm').on('submit', function (event) {
+          event.preventDefault();
+          var topic = $('#debate_topic').val();
+          var role = $('#debate_role').val();
+          var argument = $('#initial_argument').val();
+          const date = new Date();
+          const str_time = date.getHours() + ':' + date.getMinutes();
+
+          var userHtml =
+            '<div class="d-flex justify-content-end mb-4"><div class="msg_cotainer_send">Topic: ' +
+            topic +
+            '<br/>Role: ' +
+            role +
+            '<br/>Argument: ' +
+            argument +
+            '<span class="msg_time_send">' +
+            str_time +
+            '</span></div></div>';
+
+          $('#messageFormeight').append(userHtml);
+
+          $.ajax({
+            type: 'POST',
+            url: '/start_debate',
+            contentType: 'application/json',
+            data: JSON.stringify({ topic: topic, role: role, argument: argument }),
+            success: function (data) {
+              $('#debate_timer').show();
+              $('#endDebate').show();
+              startDebateTimer(300);
+
+              var botHtml = '<div class="d-flex justify-content-start mb-4"><div class="msg_cotainer">' + data.response + '<span class="msg_time">' + str_time + '</span></div></div>';
+              $('#messageFormeight').append(botHtml);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
