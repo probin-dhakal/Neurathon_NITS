@@ -1,0 +1,168 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debate Partner AI</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+          <h3>Debate Partner AI</h3>
+          <p>Start a Debate with AI</p>
+        </div>
+        <div class="card-body">
+          <form id="startDebateForm" class="mb-4">
+            <div class="form-group">
+              <label for="debate_topic">Debate Topic</label>
+              <input
+                type="text"
+                id="debate_topic"
+                class="form-control"
+                placeholder="Enter Debate Topic"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="debate_role">Your Role</label>
+              <select id="debate_role" class="form-control" required>
+                <option value="For">For</option>
+                <option value="Against">Against</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="initial_argument">Initial Argument</label>
+              <textarea
+                id="initial_argument"
+                class="form-control"
+                rows="3"
+                placeholder="Enter Your Initial Argument"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-block">
+              Start Debate
+            </button>
+          </form>
+
+          <div id="debate_timer" class="alert alert-info text-center" style="display: none;">
+            Timer: <span id="timer">05:00</span>
+          </div>
+
+          <button id="endDebate" class="btn btn-danger btn-block mb-3" style="display: none;">
+            End Debate
+          </button>
+
+          <div id="messageFormeight" class="border p-3 rounded bg-white" style="height: 300px; overflow-y: auto;"></div>
+
+          <form id="messageArea" class="mt-3 input-group">
+            <input
+              type="text"
+              id="text"
+              name="msg"
+              class="form-control"
+              placeholder="Type your message..."
+              required
+            />
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </form>
+
+          <a href="/download_pdf" class="btn btn-outline-secondary btn-block mt-2">Download Transcript (PDF)</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        let debateTimerInterval;
+
+        function startDebateTimer(duration) {
+          let timer = duration;
+          debateTimerInterval = setInterval(function () {
+            let minutes = Math.floor(timer / 60);
+            let seconds = timer % 60;
+
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            $('#timer').text(minutes + ':' + seconds);
+
+            if (--timer < 0) {
+              clearInterval(debateTimerInterval);
+              $('#timer').text('Time is up!');
+            }
+          }, 1000);
+        }
+
+        $('#startDebateForm').on('submit', function (event) {
+          event.preventDefault();
+          const topic = $('#debate_topic').val();
+          const role = $('#debate_role').val();
+          const argument = $('#initial_argument').val();
+          const date = new Date();
+          const str_time = date.getHours() + ':' + date.getMinutes();
+
+          const userHtml = `
+            <div class="text-right">
+              <div class="alert alert-success">
+                <strong>Topic:</strong> ${topic}<br/>
+                <strong>Role:</strong> ${role}<br/>
+                <strong>Argument:</strong> ${argument}<br/>
+                <small>${str_time}</small>
+              </div>
+            </div>`;
+
+          $('#messageFormeight').append(userHtml);
+
+          $.ajax({
+            type: 'POST',
+            url: '/start_debate',
+            contentType: 'application/json',
+            data: JSON.stringify({ topic, role, argument }),
+            success: function (data) {
+              $('#debate_timer').show();
+              $('#endDebate').show();
+              startDebateTimer(300);
+
+              const botHtml = `
+                <div class="text-left">
+                  <div class="alert alert-primary">
+                    ${data.response}
+                    <br/><small>${str_time}</small>
+                  </div>
+                </div>`;
+
+              $('#messageFormeight').append(botHtml);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

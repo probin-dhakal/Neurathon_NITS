@@ -109,6 +109,8 @@
 
 # if __name__ == '__main__':
 #     app.run(host="0.0.0.0", port=8081, debug=True)
+
+
 from flask import Flask, render_template, request, session, send_file, jsonify
 from src.helper import download_hugging_face_embeddings
 from pinecone import Pinecone
@@ -187,7 +189,7 @@ def generate_pdf(debate_history):
 
 @app.route("/")
 def index():
-    return render_template('chat.html')
+    return render_template('chat2.html')
 
 @app.route('/start_debate', methods=['POST'])
 def start_debate():
