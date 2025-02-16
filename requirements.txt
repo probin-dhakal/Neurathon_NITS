@@ -1,11 +1,16 @@
 
-huggingface-hub==0.14.1
+huggingface-hub>=0.23.0
+pip install langchain-pinecone
+
 flask
 streamlit
 ctransformers
 sentence-transformers
 pinecone-client
 langchain
+langchain_community
+langchain_huggingface
+
 pypdf
 
 
