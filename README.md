@@ -180,3 +180,6 @@ License
 
 This project is licensed under the MIT License.
 
+![nlp](https://github.com/user-attachments/assets/e01ec5ab-6b8c-4da3-954c-00b573843e4a)
+
+
