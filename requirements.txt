@@ -6,6 +6,7 @@ ctransformers
 sentence-transformers
 pinecone-client
 langchain
+langchain_community
 pypdf
 
 
