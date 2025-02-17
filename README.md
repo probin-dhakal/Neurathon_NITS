@@ -105,7 +105,7 @@ We use Sentence Transformers from Hugging Face to convert user queries and text 
 
 The generated embeddings are indexed and stored in Pinecone, a vector search database. When a new query is made, its embedding is compared with the stored embeddings to retrieve the most relevant information based on semantic similarity.
 
-### Language Model - LLaMA
+### Language Model - LLaMA (token limits-500)
 We leverage Meta's LLaMA model as the core language model to generate contextually accurate responses during debates. The retrieved relevant information from Pinecone is passed as context to the LLaMA model, improving the quality of generated responses.
 
 ## Generating PDF
