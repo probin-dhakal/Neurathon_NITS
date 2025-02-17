@@ -130,7 +130,7 @@ Running on http://192.168.12.129:8081 Press CTRL+C to quit
 - **Developer:** Team 0101 NEURATHON NIT Silchar
 - **Hugging Face:** Sentence Transformers
 - **Pinecone:** Vector Search
-- **Meta:** LLaMA Model
+- **Meta:** LLaMA Model (token limits-500)
 
 ## License
 This project is licensed under the MIT License.
